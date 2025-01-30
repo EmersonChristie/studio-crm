@@ -94,6 +94,17 @@ export default function UserAuthForm() {
 
   return (
     <>
+      <div className='flex flex-col space-y-2 text-center'>
+        <h1 className='text-2xl font-semibold tracking-tight'>
+          {isRegistering ? 'Create an account' : 'Welcome back'}
+        </h1>
+        <p className='text-sm text-muted-foreground'>
+          {isRegistering
+            ? 'Enter your email below to create your account'
+            : 'Enter your email below to sign in to your account'}
+        </p>
+      </div>
+
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
