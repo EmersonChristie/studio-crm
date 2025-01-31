@@ -97,7 +97,21 @@ export const provenance = pgTable('provenance', {
   createdAt: timestamp('created_at').defaultNow().notNull()
 });
 
-// Artworks table
+export const images = pgTable('images', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  url: text('url').notNull(),
+  alt: text('alt'),
+  caption: text('caption'),
+  width: integer('width'),
+  height: integer('height'),
+  size: integer('size'), // in bytes
+  mimeType: text('mime_type'),
+  filename: text('filename'),
+  blurDataUrl: text('blur_data_url'), // for image placeholder/loading
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull()
+});
+
 export const artworks = pgTable('artworks', {
   id: uuid('id').defaultRandom().primaryKey(),
   title: text('title').notNull(),
@@ -118,6 +132,20 @@ export const artworks = pgTable('artworks', {
   retailPrice: decimal('retail_price', { precision: 10, scale: 2 }),
   status: artworkStatusEnum('status').default('available').notNull(),
   location: text('location'),
+  mainImageId: uuid('main_image_id').references(() => images.id),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull()
+});
+
+export const artworkSecondaryImages = pgTable('artwork_secondary_images', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  artworkId: uuid('artwork_id')
+    .notNull()
+    .references(() => artworks.id),
+  imageId: uuid('image_id')
+    .notNull()
+    .references(() => images.id),
+  position: integer('position').notNull(), // For ordering the images
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
