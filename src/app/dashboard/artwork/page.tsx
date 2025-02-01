@@ -3,28 +3,14 @@ import { buttonVariants } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';
-import { searchParamsCache, serialize } from '@/lib/searchparams';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
-import ArtworkListingPage from '@/features/artworks/components/artwork-listing';
+import { ArtworksView } from '@/features/artworks/components/artworks-view';
 import ArtworkTableAction from '@/features/artworks/components/artwork-tables/artwork-table-action';
 
-export const metadata = {
-  title: 'Dashboard: Artworks'
-};
-
-type PageProps = {
-  searchParams: Promise<SearchParams>;
-};
-
-export default async function Page(props: PageProps) {
-  const searchParams = await props.searchParams;
-  searchParamsCache.parse(searchParams);
-  const key = serialize({ ...searchParams });
-
+export default function ArtworkPage() {
   return (
     <PageContainer scrollable={false}>
       <div className='flex flex-1 flex-col space-y-4'>
@@ -43,10 +29,9 @@ export default async function Page(props: PageProps) {
         <Separator />
         <ArtworkTableAction />
         <Suspense
-          key={key}
-          fallback={<DataTableSkeleton columnCount={7} rowCount={10} />}
+          fallback={<DataTableSkeleton columnCount={9} rowCount={10} />}
         >
-          <ArtworkListingPage />
+          <ArtworksView />
         </Suspense>
       </div>
     </PageContainer>

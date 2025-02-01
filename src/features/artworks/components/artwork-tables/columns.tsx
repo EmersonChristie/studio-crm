@@ -2,19 +2,40 @@
 import { Artwork } from '@/features/artworks/types';
 import { ColumnDef } from '@tanstack/react-table';
 import Image from 'next/image';
+import { Checkbox } from '@/components/ui/checkbox';
 import { CellAction } from './cell-action';
+import { formatPrice } from '@/lib/utils';
 
 export const columns: ColumnDef<Artwork>[] = [
   {
-    accessorKey: 'mainImage',
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label='Select all'
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label='Select row'
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false
+  },
+  {
+    id: 'mainImage',
     header: 'IMAGE',
     cell: ({ row }) => {
-      const image = row.original.mainImage;
-      return image ? (
+      const mainImage = row.original.mainImage;
+      return mainImage ? (
         <div className='relative aspect-square w-20'>
           <Image
-            src={image.url}
-            alt={image.alt || row.original.title}
+            src={mainImage.url}
+            alt={mainImage.alt || row.original.title}
             fill
             className='rounded-lg object-cover'
           />
@@ -32,7 +53,7 @@ export const columns: ColumnDef<Artwork>[] = [
     cell: ({ row }) => row.original.year || 'N/A'
   },
   {
-    accessorKey: 'artist',
+    id: 'artist',
     header: 'ARTIST',
     cell: ({ row }) => row.original.artist?.name || 'Unknown'
   },
@@ -46,19 +67,13 @@ export const columns: ColumnDef<Artwork>[] = [
     header: 'PRICE',
     cell: ({ row }) => {
       const price = row.original.price;
-      if (price === null) return 'N/A';
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-      }).format(price);
+      return price ? formatPrice(Number(price)) : 'N/A';
     }
   },
   {
     accessorKey: 'status',
     header: 'STATUS',
-    cell: ({ row }) => {
-      return <span className='capitalize'>{row.original.status}</span>;
-    }
+    cell: ({ row }) => <span className='capitalize'>{row.original.status}</span>
   },
   {
     id: 'actions',

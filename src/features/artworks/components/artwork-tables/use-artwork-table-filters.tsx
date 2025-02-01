@@ -19,6 +19,7 @@ export function useArtworkTableFilters() {
 
   const [page, setPage] = useQueryState(
     'page',
+
     searchParams.page.withDefault(1)
   );
 

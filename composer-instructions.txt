@@ -1,0 +1,128 @@
+# Art Gallery CRM Architecture Guide
+
+## 1. Core Architecture Principles
+
+### 1.1 Server-First Approach
+- Use Server Components as the default
+- Leverage server-side data fetching and caching
+- Move to Client Components only for interactive UI elements
+- Implement Server Actions for mutations
+
+### 1.2 Rendering Strategy
+- Static Rendering (Default)
+  - Use for gallery pages, artwork listings, and artist profiles
+  - Enable ISR for content that changes periodically
+- Dynamic Rendering
+  - Use for personalized content and real-time data
+  - Implement for admin dashboards and analytics
+- Streaming
+  - Use for long data-fetching operations
+  - Implement loading.tsx for immediate UI feedback
+
+## 2. Component Architecture
+
+    /features/artworks/
+    ├── components/
+    │   ├── artwork-tables/
+    │   │   ├── columns.tsx            # Table column definitions
+    │   │   ├── cell-action.tsx        # Row action buttons (edit/delete)
+    │   │   ├── artwork-table-action.tsx # Table filters and search
+    │   │   └── use-artwork-table-filters.tsx # Filter state management
+    │   └── artwork-listing.tsx        # Main listing component
+    ├── types/
+    │   └── index.ts                   # Type definitions
+
+3. Data Fetching Best Practices
+
+1. Server Components
+   - Use server components by default for data fetching
+   - Keep client components only for interactive UI elements
+
+2. Data Service Layer (/lib/services/)
+   - Separate data fetching logic from components
+   - Use 'use server' directive for server actions
+   - Export individual functions instead of service objects
+   - Implement caching strategy using React cache and Next.js unstable_cache
+   - Handle authentication checks
+   - Include proper error handling
+
+3. Caching Strategy
+   - Use React's cache for request deduplication
+   - Use Next.js unstable_cache for persistent caching
+   - Implement cache invalidation using tags
+   - Set appropriate revalidation periods
+
+4. Type Safety
+   - Define clear interfaces for data structures
+   - Use TypeScript for end-to-end type safety
+   - Handle nullable fields 
+   
+3. Example Implementation Flow:
+
+// 1. Define Types
+    export type Artwork = {
+    id: string;
+    title: string;
+    // ... other fields
+    };
+
+// 2. Create Service Functions
+    'use server';
+    export const getArtworks = cache(async function(filters) {
+    // Authentication
+    const session = await auth();
+    if (!session?.user?.id) throw new Error('Unauthorized');
+
+    // Caching
+    return await unstable_cache(
+        async () => {
+        // Database queries
+        const data = await db.select()...
+        return data;
+        },
+        ['cache-key'],
+        { revalidate: 60, tags: ['cache-tag'] }
+    )();
+    });
+
+// 3. Server Component
+    export default async function ListingPage() {
+    // Data fetching
+    const data = await getArtworks({...});
+    
+    // Render
+    return <DataTable data={data} />;
+    }
+
+// 4. Client Components (for interactivity)
+    'use client';
+    export function CellAction({ data }: { data: Artwork }) {
+    // Interactive UI logic
+    }
+
+4. Key Principles:
+
+    1. Server-First Approach
+    - Fetch data on the server when possible
+    - Use server components by default
+    - Move to client components only when needed for interactivity
+
+    2. Modular Architecture
+    - Separate concerns (data/UI/types)
+    - Keep components focused and reusable
+    - Use custom hooks for shared logic
+
+    3. Performance Optimization
+    - Implement appropriate caching strategies
+    - Use parallel data fetching
+    - Optimize image loading with next/image
+
+    4. Type Safety
+    - Define clear interfaces
+    - Use TypeScript throughout
+    - Handle null/undefined cases
+
+    5. Error Handling
+    - Implement proper error boundaries
+    - Add loading states
+    - Handle edge cases
