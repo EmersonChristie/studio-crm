@@ -3,7 +3,7 @@
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { useState, useEffect } from 'react';
-import { Artwork } from '../types';
+import { Artwork, ArtworkStatus } from '../types';
 import { ViewMode } from '@/components/ui/data-view/types';
 import { useQueryState } from 'nuqs';
 import { searchParams } from '@/lib/searchparams';
@@ -32,10 +32,10 @@ export function useArtworkView() {
   );
 
   // URL state
-  const [page] = useQueryState('page', searchParams.page);
+  const [page, setPage] = useQueryState('page', searchParams.page);
   const [limit] = useQueryState('limit', searchParams.limit);
-  const [search] = useQueryState('q', searchParams.q);
-  const [status] = useQueryState('status', searchParams.status);
+  const [search, setSearch] = useQueryState('q', searchParams.q);
+  const [status, setStatus] = useQueryState('status', searchParams.status);
 
   // Local state
   const [isLoading, setIsLoading] = useState(false);
@@ -74,7 +74,7 @@ export function useArtworkView() {
     setPage(1);
   };
 
-  const handleFilter = (filters: any) => {
+  const handleFilter = (filters: { status?: ArtworkStatus }) => {
     if (filters.status) {
       setStatus(filters.status);
       setPage(1);
@@ -87,19 +87,17 @@ export function useArtworkView() {
     try {
       switch (action) {
         case 'price-list':
-          const priceList = await generatePriceList(ids);
-          // TODO: Handle the generated price list
+          await generatePriceList(ids);
           toast.success('Price list generated');
           break;
 
         case 'pdf-catalog':
-          const catalog = await generatePdfCatalog(ids);
-          // TODO: Handle the generated catalog
+          await generatePdfCatalog(ids);
           toast.success('PDF catalog generated');
           break;
 
         case 'delete':
-          await bulkUpdateArtworkStatus(ids, 'not_for_sale');
+          await bulkUpdateArtworkStatus(ids, 'not_for_sale' as ArtworkStatus);
           toast.success('Selected artworks marked as not for sale');
           break;
 

@@ -1,63 +1,79 @@
 'use client';
 
-import { DataTable } from '@/components/ui/table/data-table';
-import { columns } from './artwork-tables/columns';
-import { ArtworkGrid } from './artwork-grid/artwork-grid';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import Image from 'next/image';
+import { formatPrice } from '@/lib/utils';
 import { useArtworkView } from '../hooks/use-artwork-view';
-import { ViewToggle } from './artwork-view-toggle';
-import { BulkActions } from './artwork-tables/bulk-actions';
 import { Artwork } from '../types';
-import { DataTablePagination } from '@/components/ui/pagination/data-table-pagination';
+import { useState } from 'react';
 
-interface ArtworkListingProps {
-  data: Artwork[];
-  totalItems: number;
-}
-
-export function ArtworkListing({ data, totalItems }: ArtworkListingProps) {
-  const {
-    viewMode,
-    gridColumns,
-    selectedItems,
-    toggleViewMode,
-    updateGridColumns,
-    setSelectedItems
-  } = useArtworkView();
+export function ArtworkListing() {
+  const { data, viewMode, gridColumns } = useArtworkView();
+  const [selectedItems, setSelectedItems] = useState(new Set<string>());
 
   const handleSelect = (id: string) => {
-    setSelectedItems((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
+    const newSelected = new Set(selectedItems);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedItems(newSelected);
   };
 
   return (
-    <div className='space-y-4'>
-      <div className='flex items-center justify-between'>
-        <ViewToggle currentView={viewMode} onToggle={toggleViewMode} />
-        {selectedItems.size > 0 && (
-          <BulkActions selectedIds={Array.from(selectedItems)} />
-        )}
-      </div>
-
-      {viewMode === 'table' ? (
-        <DataTable columns={columns} data={data} totalItems={totalItems} />
-      ) : (
-        <div className='space-y-4'>
-          <ArtworkGrid
-            data={data}
-            columns={gridColumns}
-            selectedItems={selectedItems}
-            onSelect={handleSelect}
-          />
-          <DataTablePagination totalItems={totalItems} />
-        </div>
-      )}
+    <div
+      className='grid gap-4'
+      style={{
+        gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))`
+      }}
+    >
+      {data.map((artwork: Artwork) => (
+        <Card key={artwork.id} className='relative'>
+          <div className='absolute right-2 top-2 z-10'>
+            <Checkbox
+              checked={selectedItems.has(artwork.id)}
+              onCheckedChange={() => handleSelect(artwork.id)}
+            />
+          </div>
+          <CardContent className='p-0'>
+            <div className='relative aspect-square'>
+              {artwork.mainImage && (
+                <Image
+                  src={artwork.mainImage.url}
+                  alt={artwork.mainImage.alt || artwork.title}
+                  fill
+                  className='rounded-t-lg object-cover'
+                />
+              )}
+            </div>
+          </CardContent>
+          <CardFooter className='flex flex-col items-start p-4'>
+            <h3 className='font-semibold'>{artwork.title}</h3>
+            <p className='text-sm text-muted-foreground'>
+              {artwork.artist?.name || 'Unknown Artist'}
+            </p>
+            {artwork.year && (
+              <p className='text-sm text-muted-foreground'>{artwork.year}</p>
+            )}
+            {artwork.dimensions && (
+              <p className='text-sm text-muted-foreground'>
+                {artwork.dimensions.width} x {artwork.dimensions.height}{' '}
+                {artwork.dimensions.unit}
+              </p>
+            )}
+            <p className='mt-2 text-sm'>
+              {artwork.price
+                ? formatPrice(Number(artwork.price))
+                : 'Price on request'}
+            </p>
+            <span className='mt-1 text-xs capitalize text-muted-foreground'>
+              {artwork.status}
+            </span>
+          </CardFooter>
+        </Card>
+      ))}
     </div>
   );
 }

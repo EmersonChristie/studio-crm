@@ -56,11 +56,12 @@ export function DataTable<TData, TValue>({
       rowSelection: {}
     },
     manualPagination: true,
-    manualFiltering: true
+    manualFiltering: true,
+    pageCount: Math.ceil(totalItems / (pageSizeOptions[0] || 10))
   });
 
   return (
-    <div className='flex flex-1 flex-col space-y-4 overflow-hidden'>
+    <div className='flex flex-1 flex-col space-y-4'>
       <div className='rounded-md border'>
         <ScrollArea className='h-[calc(100vh-300px)]'>
           <Table>
@@ -113,6 +114,7 @@ export function DataTable<TData, TValue>({
         </ScrollArea>
       </div>
       <DataTablePagination
+        table={table}
         totalItems={totalItems}
         pageSizeOptions={pageSizeOptions}
       />

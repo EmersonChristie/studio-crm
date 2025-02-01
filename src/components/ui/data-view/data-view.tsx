@@ -8,7 +8,7 @@ import { DataViewToolbar } from './data-view-toolbar';
 import { DataViewFilters } from './data-view-filters';
 import { ViewMode } from './types';
 
-interface DataViewProps<TData, TValue> {
+interface DataViewProps<TData extends { id: string }, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   totalItems: number;
@@ -27,11 +27,11 @@ interface DataViewProps<TData, TValue> {
   bulkActions?: { label: string; value: string }[];
 }
 
-export function DataView<TData, TValue>({
+export function DataView<TData extends { id: string }, TValue>({
   columns,
   data,
   totalItems,
-  pageSizeOptions,
+  pageSizeOptions = [10, 20, 30, 40, 50],
   enableGridView = false,
   viewMode = 'table',
   setViewMode = () => {},
@@ -59,22 +59,24 @@ export function DataView<TData, TValue>({
         <DataViewFilters columns={filterableColumns} onFilter={onFilter} />
       )}
 
-      {viewMode === 'table' ? (
-        <DataTable
-          columns={columns}
-          data={data}
-          totalItems={totalItems}
-          pageSizeOptions={pageSizeOptions}
-          onSelectionChange={setSelectedItems}
-        />
-      ) : (
-        <DataGrid
-          data={data}
-          totalItems={totalItems}
-          pageSizeOptions={pageSizeOptions}
-          onSelectionChange={setSelectedItems}
-        />
-      )}
+      <div className='flex flex-1 flex-col space-y-4 overflow-hidden'>
+        {viewMode === 'table' ? (
+          <DataTable
+            columns={columns}
+            data={data}
+            totalItems={totalItems}
+            pageSizeOptions={pageSizeOptions}
+            onSelectionChange={setSelectedItems}
+          />
+        ) : (
+          <DataGrid
+            data={data}
+            totalItems={totalItems}
+            pageSizeOptions={pageSizeOptions}
+            onSelectionChange={setSelectedItems}
+          />
+        )}
+      </div>
     </div>
   );
 }
