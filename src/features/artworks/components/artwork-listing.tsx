@@ -1,4 +1,4 @@
-import { DataTable } from '@/components/ui/table/data-table';
+import { DataTable } from './data-table/data-table';
 import { searchParamsCache } from '@/lib/searchparams';
 import { getArtworks } from '@/lib/services/artwork.service';
 import { columns } from './artwork-tables/columns';
@@ -19,6 +19,12 @@ export default async function ArtworkListingPage() {
   });
 
   return (
-    <DataTable columns={columns} data={artworks} totalItems={total_artworks} />
+    <div className='space-y-4'>
+      <DataTable
+        columns={columns}
+        data={artworks}
+        totalItems={total_artworks}
+      />
+    </div>
   );
 }

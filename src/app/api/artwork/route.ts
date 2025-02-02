@@ -1,4 +1,4 @@
-import { artworkService } from '@/lib/services/artwork.service';
+import { getArtworks } from '@/lib/services/artwork.service';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const status = searchParams.get('status') || undefined;
 
   try {
-    const data = await artworkService.getArtworks({
+    const data = await getArtworks({
       page,
       limit,
       search,

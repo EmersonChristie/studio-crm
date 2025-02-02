@@ -1,13 +1,18 @@
 'use client';
+import { createSelectionColumn } from '../data-table/data-table-column-def';
 import { Artwork } from '@/features/artworks/types';
 import { ColumnDef } from '@tanstack/react-table';
 import Image from 'next/image';
 import { CellAction } from './cell-action';
+import { DataTableColumnHeader } from '../data-table/data-table-column-header';
 
 export const columns: ColumnDef<Artwork>[] = [
+  createSelectionColumn<Artwork>(),
   {
     accessorKey: 'mainImage',
-    header: 'IMAGE',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='IMAGE' />
+    ),
     cell: ({ row }) => {
       const image = row.original.mainImage;
       return image ? (
@@ -20,30 +25,41 @@ export const columns: ColumnDef<Artwork>[] = [
           />
         </div>
       ) : null;
-    }
+    },
+    enableSorting: false
   },
   {
     accessorKey: 'title',
-    header: 'TITLE'
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='TITLE' />
+    )
   },
   {
     accessorKey: 'year',
-    header: 'YEAR',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='YEAR' />
+    ),
     cell: ({ row }) => row.original.year || 'N/A'
   },
   {
-    accessorKey: 'artist',
-    header: 'ARTIST',
+    accessorKey: 'artist.name',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='ARTIST' />
+    ),
     cell: ({ row }) => row.original.artist?.name || 'Unknown'
   },
   {
     accessorKey: 'dimensions',
-    header: 'DIMENSIONS',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='DIMENSIONS' />
+    ),
     cell: ({ row }) => row.original.dimensions || 'N/A'
   },
   {
     accessorKey: 'price',
-    header: 'PRICE',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='PRICE' />
+    ),
     cell: ({ row }) => {
       const price = row.original.price;
       if (price === null) return 'N/A';
@@ -55,13 +71,20 @@ export const columns: ColumnDef<Artwork>[] = [
   },
   {
     accessorKey: 'status',
-    header: 'STATUS',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='STATUS' />
+    ),
     cell: ({ row }) => {
       return <span className='capitalize'>{row.original.status}</span>;
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
     }
   },
   {
     id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
+    cell: ({ row }) => <CellAction data={row.original} />,
+    enableSorting: false,
+    enableHiding: false
   }
 ];
