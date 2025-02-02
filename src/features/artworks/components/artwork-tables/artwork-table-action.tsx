@@ -1,8 +1,7 @@
 'use client';
-
-import { DataTableFilterBox } from '../../data-table/data-table-filter-box';
-import { DataTableResetFilter } from '../../data-table/data-table-reset-filter';
-import { DataTableSearch } from '../../data-table/data-table-search';
+import { DataTableFilterBox } from '../data-table/data-table-filter-box';
+import { DataTableResetFilter } from '../data-table/data-table-reset-filter';
+import { DataTableSearch } from '../data-table/data-table-search';
 import { useArtworkTableFilters } from './use-artwork-table-filters';
 
 export default function ArtworkTableAction() {
