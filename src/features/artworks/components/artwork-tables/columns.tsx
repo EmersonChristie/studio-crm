@@ -16,7 +16,7 @@ export const columns: ColumnDef<Artwork>[] = [
     cell: ({ row }) => {
       const image = row.original.mainImage;
       return image ? (
-        <div className='relative aspect-square w-20'>
+        <div className='relative aspect-square w-12 sm:w-16 md:w-20'>
           <Image
             src={image.url}
             alt={image.alt || row.original.title}
@@ -26,13 +26,20 @@ export const columns: ColumnDef<Artwork>[] = [
         </div>
       ) : null;
     },
-    enableSorting: false
+    enableSorting: false,
+    enableHiding: false
   },
   {
     accessorKey: 'title',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='TITLE' />
-    )
+    ),
+    cell: ({ row }) => (
+      <div className='max-w-[120px] truncate font-medium sm:max-w-[200px] md:max-w-[350px]'>
+        {row.getValue('title')}
+      </div>
+    ),
+    enableHiding: false
   },
   {
     accessorKey: 'year',
@@ -46,7 +53,11 @@ export const columns: ColumnDef<Artwork>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='ARTIST' />
     ),
-    cell: ({ row }) => row.original.artist?.name || 'Unknown'
+    cell: ({ row }) => (
+      <div className='max-w-[150px] truncate'>
+        {row.original.artist?.name || 'Unknown'}
+      </div>
+    )
   },
   {
     accessorKey: 'dimensions',
@@ -79,7 +90,8 @@ export const columns: ColumnDef<Artwork>[] = [
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
-    }
+    },
+    enableHiding: false
   },
   {
     id: 'actions',
