@@ -95,18 +95,11 @@ export function DataTable({
     const updateColumnVisibility = () => {
       const screenWidth = window.innerWidth;
 
-      // iPhone SE size and smaller
-      const isMobile = screenWidth < 375;
-      // iPhone 12/13/14 size
-      const isSmallTablet = screenWidth >= 375 && screenWidth < 390;
-      // iPad Mini / Small tablets
-      const isTablet = screenWidth >= 390 && screenWidth < 768;
-
       setColumnVisibility({
-        year: !isMobile,
-        dimensions: !isMobile && !isSmallTablet && !isTablet,
-        price: !isMobile && !isSmallTablet,
-        'artist.name': !isMobile
+        year: screenWidth >= 640, // sm
+        dimensions: screenWidth >= 1024, // lg
+        price: screenWidth >= 768, // md
+        'artist.name': screenWidth >= 640 // sm
       });
     };
 
@@ -128,67 +121,67 @@ export function DataTable({
     <div className='w-full space-y-4'>
       <DataTableToolbar table={table} />
 
-      {/* Wrap table in a scrollable container */}
       <div className='relative rounded-md border'>
-        <div className='overflow-hidden'>
-          <div className='overflow-x-auto'>
-            <div className='inline-block min-w-full align-middle'>
-              <Table>
-                <TableHeader>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => (
-                        <TableHead
-                          key={header.id}
-                          className='whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold'
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  {table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && 'selected'}
-                        className='hover:bg-muted/50'
+        <ScrollArea className='rounded-md border'>
+          <div className='relative w-full'>
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead
+                        key={header.id}
+                        className='whitespace-nowrap px-2 py-3 text-left text-sm font-semibold first:pl-4 last:pr-4'
                       >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell
-                            key={cell.id}
-                            className='whitespace-nowrap px-2 py-2'
-                          >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && 'selected'}
+                      className='hover:bg-muted/50'
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          className='px-2 py-2 first:pl-4 last:pr-4'
+                        >
+                          <div className='min-w-[80px] overflow-hidden text-ellipsis'>
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()
                             )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={columns.length}
-                        className='h-24 text-center'
-                      >
-                        No results.
-                      </TableCell>
+                          </div>
+                        </TableCell>
+                      ))}
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className='h-24 text-center'
+                    >
+                      No results.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </div>
-        </div>
+          <ScrollBar orientation='horizontal' />
+        </ScrollArea>
       </div>
 
       <DataTablePagination table={table} />
