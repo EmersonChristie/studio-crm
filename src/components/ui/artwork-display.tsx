@@ -2,8 +2,9 @@
 
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import BezierEasing from 'bezier-easing';
+import React from 'react';
 
 interface ShadowOptions {
   angle?: number;
@@ -31,7 +32,8 @@ function getBoxShadows(numShadowLayers: number, options: ShadowOptions = {}) {
     blur: number,
     spread: number,
     color: string
-  ) => `${left}px ${top}px ${blur}px ${spread}px ${color}`;
+  ) =>
+    `${Math.round(left * 100) / 100}px ${Math.round(top * 100) / 100}px ${Math.round(blur * 100) / 100}px ${spread}px ${color}`;
 
   const alphaEasingValue = [0.1, 0.5, 0.9, 0.5] as const;
   const offsetEasingValue = [0.7, 0.1, 0.9, 0.3] as const;
@@ -132,10 +134,12 @@ export function ArtworkDisplay({
   className,
   shadowIntensity = 0.4
 }: ArtworkDisplayProps) {
-  const realisticShadow = useMemo(
-    () => generateArtShadows(4, shadowIntensity),
-    [shadowIntensity]
-  );
+  // Move shadow generation to client-side only
+  const [shadow, setShadow] = useState<string>('none');
+
+  useEffect(() => {
+    setShadow(generateArtShadows(4, shadowIntensity));
+  }, [shadowIntensity]);
 
   return (
     <div
@@ -151,7 +155,9 @@ export function ArtworkDisplay({
             'relative max-h-[85%] max-w-[85%] bg-white dark:bg-neutral-200'
           )}
           style={{
-            boxShadow: realisticShadow
+            // boxShadow: shadow
+            boxShadow:
+              'rgba(0, 0, 0, 0.043) 0.37237016456675937px 0.44377348139733286px 0.5793051374284405px 0px, rgba(0, 0, 0, 0.06) 0.1657897618972239px .5318080591723024px .5469297616353146px 0px, rgba(0, 0, 0, 0.075) 0.0547577922105507px 0.3528881844807665px 0.918773742338844px 0px, rgba(0, 0, 0, 0.086) 1.0803221177377376px 1.575108153864249px 2.214268599539516px 0px, rgba(0, 0, 0, 0.1) 1.509936997828595px 3.066137013811576px 3.213372186585694px 0px, rgba(0, 0, 0, 0.118) 3.29504811692371px 4.054139050530355px 5.058257657323903px 0px, rgba(0, 0, 0, 0.16) 5.06969024216348px 6.151111077974452px 15px 0px'
           }}
         >
           <Image

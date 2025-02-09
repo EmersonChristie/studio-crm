@@ -16,6 +16,8 @@ import { DataTableToolbar } from './data-table-toolbar';
 import { DataTablePagination } from './data-table-pagination';
 import { useDataTable } from '@/hooks/use-data-table';
 import { ViewToggle } from '@/components/ui/view-toggle';
+import { DataGrid } from '@/components/ui/data-grid';
+import { ArtworkDisplay } from '@/components/ui/artwork-display';
 
 interface DataTableProps {
   columns: ColumnDef<Artwork, any>[];
@@ -124,10 +126,17 @@ export function DataTable({
           </ScrollArea>
         </div>
       ) : (
-        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-          {/* Grid view placeholder - we'll implement this later */}
-          <div className='p-4 text-center'>Grid view coming soon...</div>
-        </div>
+        <DataGrid
+          table={table}
+          imageComponent={ArtworkDisplay}
+          imageKey='mainImage'
+          getImageProps={(artwork: Artwork) => ({
+            shadowIntensity: 0.3,
+            alt: artwork.title,
+            src: artwork.mainImage?.url || ''
+          })}
+          onSelect={onRowSelection}
+        />
       )}
 
       <div className='overflow-hidden'>
