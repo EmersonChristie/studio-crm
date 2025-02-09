@@ -12,6 +12,7 @@ import { Suspense } from 'react';
 import ArtworkListingPage from '@/features/artworks/components/artwork-listing';
 import ArtworkTableAction from '@/features/artworks/components/artwork-tables/artwork-table-action';
 import { DataTableProvider } from '@/features/artworks/components/data-table/data-table-context';
+import { ArtworksActions } from '@/features/artworks/components/artworks-actions';
 
 export const metadata = {
   title: 'Dashboard: Artworks'
@@ -50,6 +51,7 @@ export default async function Page(props: PageProps) {
             <ArtworkListingPage />
           </Suspense>
         </DataTableProvider>
+        <ArtworksActions />
       </div>
     </PageContainer>
   );
