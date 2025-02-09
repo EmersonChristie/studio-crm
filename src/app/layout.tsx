@@ -26,14 +26,16 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang='en' className={`${lato.className}`} suppressHydrationWarning>
-      <body className={'overflow-hidden'}>
+      <body className='overflow-x-hidden'>
         <NextTopLoader showSpinner={false} />
-        <NuqsAdapter>
-          <Providers session={session}>
-            <Toaster />
-            {children}
-          </Providers>
-        </NuqsAdapter>
+        <div className='w-full'>
+          <NuqsAdapter>
+            <Providers session={session}>
+              <Toaster />
+              {children}
+            </Providers>
+          </NuqsAdapter>
+        </div>
       </body>
     </html>
   );

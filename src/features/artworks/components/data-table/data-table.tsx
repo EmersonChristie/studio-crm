@@ -118,12 +118,14 @@ export function DataTable({
   }, [rowSelection, onRowSelection, table]);
 
   return (
-    <div className='w-full space-y-4'>
-      <DataTableToolbar table={table} />
+    <div className='w-full space-y-4 px-2 md:px-4'>
+      <div className='overflow-hidden'>
+        <DataTableToolbar table={table} />
+      </div>
 
       <div className='relative rounded-md border'>
-        <ScrollArea className='rounded-md border'>
-          <div className='relative w-full'>
+        <ScrollArea className='w-full rounded-md border'>
+          <div className='min-w-full'>
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -184,7 +186,9 @@ export function DataTable({
         </ScrollArea>
       </div>
 
-      <DataTablePagination table={table} />
+      <div className='overflow-hidden'>
+        <DataTablePagination table={table} />
+      </div>
     </div>
   );
 }
