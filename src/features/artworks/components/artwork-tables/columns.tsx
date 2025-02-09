@@ -5,6 +5,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import Image from 'next/image';
 import { CellAction } from './cell-action';
 import { DataTableColumnHeader } from '../data-table/data-table-column-header';
+import { ArtworkDisplay } from '@/components/ui/artwork-display';
 
 export const columns: ColumnDef<Artwork>[] = [
   createSelectionColumn<Artwork>(),
@@ -17,11 +18,17 @@ export const columns: ColumnDef<Artwork>[] = [
       const image = row.original.mainImage;
       return image ? (
         <div className='relative aspect-square w-12 sm:w-16 md:w-20'>
-          <Image
+          {/* <Image
             src={image.url}
             alt={image.alt || row.original.title}
             fill
             className='rounded-lg object-cover'
+          /> */}
+          <ArtworkDisplay
+            src={image.url}
+            alt={image.alt || row.original.title}
+
+            // className='w-[300px]' // Optional custom size
           />
         </div>
       ) : null;

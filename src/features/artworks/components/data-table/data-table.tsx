@@ -1,19 +1,6 @@
 'use client';
 
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  getPaginationRowModel,
-  RowSelectionState,
-  getSortedRowModel,
-  SortingState,
-  getFilteredRowModel,
-  ColumnFiltersState,
-  VisibilityState
-} from '@tanstack/react-table';
-
+import { ColumnDef, flexRender } from '@tanstack/react-table';
 import {
   Table,
   TableBody,
@@ -23,22 +10,12 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
 import { Artwork } from '../../types';
 import React from 'react';
 import { DataTableToolbar } from './data-table-toolbar';
 import { DataTablePagination } from './data-table-pagination';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import {
-  DoubleArrowLeftIcon,
-  DoubleArrowRightIcon
-} from '@radix-ui/react-icons';
+import { useDataTable } from '@/hooks/use-data-table';
+import { ViewToggle } from '@/components/ui/view-toggle';
 
 interface DataTableProps {
   columns: ColumnDef<Artwork, any>[];
@@ -53,138 +30,105 @@ export function DataTable({
   totalItems,
   onRowSelection
 }: DataTableProps) {
-  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({
+  const { table, view, setView, debugState } = useDataTable({
+    data,
+    columns,
+    initialVisibility: {
       year: false,
       dimensions: false,
       price: false,
       'artist.name': false
-    });
-
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    state: {
-      rowSelection,
-      sorting,
-      columnFilters,
-      columnVisibility
-    },
-    initialState: {
-      pagination: {
-        pageSize: 10
-      }
     }
   });
 
-  // Update column visibility based on screen size
+  // Log state changes
   React.useEffect(() => {
-    const updateColumnVisibility = () => {
-      const screenWidth = window.innerWidth;
+    console.log('Table State:', debugState);
+  }, [debugState]);
 
-      setColumnVisibility({
-        year: screenWidth >= 640, // sm
-        dimensions: screenWidth >= 1024, // lg
-        price: screenWidth >= 768, // md
-        'artist.name': screenWidth >= 640 // sm
-      });
-    };
-
-    updateColumnVisibility();
-    window.addEventListener('resize', updateColumnVisibility);
-    return () => window.removeEventListener('resize', updateColumnVisibility);
-  }, []);
-
+  // Handle row selection callback
   React.useEffect(() => {
     if (onRowSelection) {
-      const selectedRows = table
-        .getSelectedRowModel()
-        .rows.map((row) => row.original);
-      onRowSelection(selectedRows);
+      onRowSelection(debugState.selectedRows);
     }
-  }, [rowSelection, onRowSelection, table]);
+  }, [debugState.selectedRows, onRowSelection]);
 
   return (
     <div className='w-full space-y-4 px-2 md:px-4'>
-      <div className='overflow-hidden'>
+      <div className='flex items-center justify-between'>
         <DataTableToolbar table={table} />
+        <ViewToggle view={view} onViewChange={setView} />
       </div>
 
-      <div className='relative rounded-md border'>
-        <ScrollArea className='w-full rounded-md border'>
-          <div className='min-w-full'>
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableHead
-                        key={header.id}
-                        className='whitespace-nowrap px-2 py-3 text-left text-sm font-semibold first:pl-4 last:pr-4'
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && 'selected'}
-                      className='hover:bg-muted/50'
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell
-                          key={cell.id}
-                          className='px-2 py-2 first:pl-4 last:pr-4'
+      {view === 'table' ? (
+        <div className='relative rounded-md border'>
+          <ScrollArea className='w-full rounded-md border'>
+            <div className='min-w-full'>
+              <Table>
+                <TableHeader>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <TableHead
+                          key={header.id}
+                          className='whitespace-nowrap px-2 py-3 text-left text-sm font-semibold first:pl-4 last:pr-4'
                         >
-                          <div className='min-w-[80px] overflow-hidden text-ellipsis'>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </div>
-                        </TableCell>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
                       ))}
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className='h-24 text-center'
-                    >
-                      No results.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-          <ScrollBar orientation='horizontal' />
-        </ScrollArea>
-      </div>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && 'selected'}
+                        className='hover:bg-muted/50'
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell
+                            key={cell.id}
+                            className='px-2 py-2 first:pl-4 last:pr-4'
+                          >
+                            <div className='min-w-[80px] overflow-hidden text-ellipsis'>
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </div>
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={columns.length}
+                        className='h-24 text-center'
+                      >
+                        No results.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+            <ScrollBar orientation='horizontal' />
+          </ScrollArea>
+        </div>
+      ) : (
+        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+          {/* Grid view placeholder - we'll implement this later */}
+          <div className='p-4 text-center'>Grid view coming soon...</div>
+        </div>
+      )}
 
       <div className='overflow-hidden'>
         <DataTablePagination table={table} />
