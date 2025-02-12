@@ -30,7 +30,8 @@ import {
   UserCircle2Icon,
   UserPen,
   UserX2Icon,
-  X
+  X,
+  Layers
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -38,6 +39,7 @@ export type Icon = LucideIcon;
 export const Icons = {
   dashboard: LayoutDashboardIcon,
   logo: Command,
+  layers: Layers,
   login: LogIn,
   close: X,
   product: LucideShoppingBag,

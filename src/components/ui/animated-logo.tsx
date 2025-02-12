@@ -5,7 +5,11 @@ import { Inter } from 'next/font/google';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export function AnimatedLogo() {
+interface AnimatedLogoProps {
+  size?: string; // Optional size prop
+}
+
+export function AnimatedLogo({ size = 'text-2xl' }: AnimatedLogoProps) {
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -43,7 +47,7 @@ export function AnimatedLogo() {
           <motion.span
             key={index}
             variants={letterAnimation}
-            className='text-2xl font-medium tracking-[0.4em]'
+            className={`${size} font-medium tracking-[0.4em]`}
           >
             {letter}
           </motion.span>
@@ -61,7 +65,7 @@ export function AnimatedLogo() {
           <motion.span
             key={index}
             variants={letterAnimation}
-            className='text-lg font-light tracking-[0.3em]'
+            className={`${size} font-light tracking-[0.3em]`}
           >
             {letter}
           </motion.span>

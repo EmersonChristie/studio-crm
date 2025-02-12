@@ -45,6 +45,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
+import { AnimatedLogo } from '../ui/animated-logo';
 
 export const company = {
   name: 'Acme Inc',
@@ -65,8 +66,9 @@ export default function AppSidebar() {
             <company.logo className='size-4' />
           </div>
           <div className='grid flex-1 text-left text-sm leading-tight'>
-            <span className='truncate font-semibold'>{company.name}</span>
-            <span className='truncate text-xs'>{company.plan}</span>
+            <span className='truncate font-semibold'>
+              {<AnimatedLogo size='text-sm' />}
+            </span>
           </div>
         </div>
       </SidebarHeader>
