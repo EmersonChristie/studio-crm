@@ -16,4 +16,5 @@ export type Artwork = {
     url: string;
     alt: string | null;
   } | null;
+  medium?: string;
 };
