@@ -1,6 +1,9 @@
 import { getArtworks } from '@/lib/services/artwork.service';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic'; // Ensure the route is not cached
+export const revalidate = 0; // Disable route cache
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const page = Number(searchParams.get('page')) || 1;

@@ -30,6 +30,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       await deleteArtwork(data.id);
       toast.success('Artwork deleted successfully');
       router.refresh();
+      router.push('/dashboard/artwork');
     } catch (error) {
       toast.error('Something went wrong');
       console.error('Error deleting artwork:', error);

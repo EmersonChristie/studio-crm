@@ -5,6 +5,9 @@ export type Artwork = {
   title: string;
   year: number | null;
   dimensions: string | null;
+  width: number | null;
+  height: number | null;
+  depth: number | null;
   price: number | null;
   status: ArtworkStatus;
   mainImageId: string | null;

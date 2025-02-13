@@ -7,12 +7,16 @@ import { ArtworkStatus } from '@/features/artworks/types';
 import { auth } from '@/lib/auth';
 import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 
 export type CreateArtworkData = {
   title: string;
   year?: number;
   medium?: string;
   dimensions?: string;
+  width?: number;
+  height?: number;
+  depth?: number;
   status: ArtworkStatus;
   mainImageId?: string;
   artistId: string;
@@ -151,11 +155,17 @@ export async function createArtwork(data: CreateArtworkData) {
       year: data.year || null,
       medium: data.medium || null,
       dimensions: data.dimensions || null,
+      width: data.width || null,
+      height: data.height || null,
+      depth: data.depth || null,
       status: data.status,
       mainImageId: data.mainImageId || null,
       artistId: data.artistId
     })
     .returning();
+
+  // Revalidate the artworks cache
+  revalidateTag('artworks');
 
   return { artwork: newArtwork[0] };
 }
@@ -192,5 +202,10 @@ export async function deleteArtwork(id: string) {
   }
 
   await db.delete(artworks).where(eq(artworks.id, id));
+
+  // Revalidate both the specific artwork and the artworks list
+  revalidateTag('artworks');
+  revalidateTag(`artwork-${id}`);
+
   return { success: true };
 }

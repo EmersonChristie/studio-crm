@@ -6,7 +6,9 @@ export const artworkSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   year: z.number().nullable(),
   medium: z.string().optional(),
-  dimensions: z.string().optional(),
+  width: z.number().optional(),
+  height: z.number().optional(),
+  depth: z.number().optional(),
   description: z.string().optional(),
   status: z.enum(['available', 'sold', 'reserved', 'not_for_sale'] as const),
 
