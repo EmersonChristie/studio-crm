@@ -12,9 +12,23 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn } from 'react-hook-form';
 import { ArtworkFormValues } from '../../../schemas/artwork-schema';
+import { ArtworkDescriptionAIDialog } from '../../artwork-description-ai-dialog';
+import { type Artwork } from '../../../types';
 
 interface GeneralTabProps {
   form: UseFormReturn<ArtworkFormValues>;
+}
+
+function mapFormValuesToArtwork(values: ArtworkFormValues): Partial<Artwork> {
+  return {
+    ...values,
+    mainImage: values.mainImage
+      ? {
+          url: values.mainImage.url,
+          alt: values.mainImage.alt ?? null
+        }
+      : null
+  };
 }
 
 export function GeneralTab({ form }: GeneralTabProps) {
@@ -138,7 +152,13 @@ export function GeneralTab({ form }: GeneralTabProps) {
           name='description'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <div className='flex items-center justify-between'>
+                <FormLabel>Description</FormLabel>
+                <ArtworkDescriptionAIDialog
+                  artwork={mapFormValuesToArtwork(form.getValues())}
+                  onGenerate={(content: string) => field.onChange(content)}
+                />
+              </div>
               <FormControl>
                 <Textarea {...field} />
               </FormControl>

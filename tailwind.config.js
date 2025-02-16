@@ -97,14 +97,19 @@ module.exports = {
           '100%': {
             'background-position': '200%'
           }
+        },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        rainbow: 'rainbow var(--speed, 2s) infinite linear'
+        rainbow: 'rainbow var(--speed, 2s) infinite linear',
+        'fade-in': 'fade-in 0.2s ease-in-out'
       }
     }
   },
-  plugins: [require('tailwindcss-animate')]
+  plugins: [require('tailwindcss-animate'), require('tailwind-scrollbar-hide')]
 };
