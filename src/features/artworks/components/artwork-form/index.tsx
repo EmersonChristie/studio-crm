@@ -21,24 +21,22 @@ export function ArtworkForm({ mode, artwork }: ArtworkFormProps) {
   const { data: session } = useSession();
 
   // Convert DB artwork type to form values type
-  const defaultValues: Partial<ArtworkFormValues> | undefined = artwork
-    ? {
-        title: artwork.title,
-        year: artwork.year ?? undefined,
-        medium: artwork.medium ?? undefined,
-        width: artwork.width ?? undefined,
-        height: artwork.height ?? undefined,
-        depth: artwork.depth ?? undefined,
-        status: artwork.status,
-        mainImage: artwork.mainImage
-          ? {
-              id: artwork.mainImage.url,
-              url: artwork.mainImage.url,
-              alt: artwork.mainImage.alt ?? undefined
-            }
-          : undefined
-      }
-    : undefined;
+  const defaultValues: Partial<ArtworkFormValues> = {
+    title: artwork?.title ?? '',
+    year: artwork?.year,
+    medium: artwork?.medium ?? null,
+    width: artwork?.width,
+    height: artwork?.height,
+    depth: artwork?.depth,
+    dimensions: artwork?.dimensions ?? null,
+    status: artwork?.status ?? 'available',
+    mainImage: artwork?.mainImage
+      ? {
+          url: artwork.mainImage.url,
+          alt: artwork.mainImage.alt
+        }
+      : null
+  };
 
   const form = useArtworkForm({
     mode,
@@ -54,20 +52,20 @@ export function ArtworkForm({ mode, artwork }: ArtworkFormProps) {
 
       // Create dimensions string
       const dimensions = createDimensionsString(
-        data.height,
-        data.width,
-        data.depth
+        data.height ?? undefined,
+        data.width ?? undefined,
+        data.depth ?? undefined
       );
 
       if (mode === 'create') {
         await createArtwork({
           title: data.title,
           year: data.year ?? undefined,
-          medium: data.medium,
+          medium: data.medium ?? undefined,
           dimensions, // Use the generated dimensions string
-          width: data.width,
-          height: data.height,
-          depth: data.depth,
+          width: data.width ?? undefined,
+          height: data.height ?? undefined,
+          depth: data.depth ?? undefined,
           status: data.status,
           artistId: session.user.id
         });

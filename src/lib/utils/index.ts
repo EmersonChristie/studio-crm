@@ -31,3 +31,28 @@ export const formatPrice = (price: number) => {
     currency: 'USD'
   }).format(price);
 };
+
+export function absoluteUrl(path: string) {
+  return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
+}
+
+/**
+ * Stole this from the @radix-ui/primitive
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/core/primitive/src/primitive.tsx
+ */
+export function composeEventHandlers<E>(
+  originalEventHandler?: (event: E) => void,
+  ourEventHandler?: (event: E) => void,
+  { checkForDefaultPrevented = true } = {}
+) {
+  return function handleEvent(event: E) {
+    originalEventHandler?.(event);
+
+    if (
+      checkForDefaultPrevented === false ||
+      !(event as unknown as Event).defaultPrevented
+    ) {
+      return ourEventHandler?.(event);
+    }
+  };
+}

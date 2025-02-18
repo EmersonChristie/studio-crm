@@ -4,25 +4,34 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'utfs.io',
-        port: ''
+        hostname: 'uploadthing.com',
+        pathname: '**'
       },
       {
         protocol: 'https',
-        hostname: 'api.slingacademy.com',
-        port: ''
+        hostname: 'utfs.io',
+        pathname: '**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+        pathname: '**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'loremflickr.com',
+        pathname: '**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+        pathname: '**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'dummyimage.com',
+        pathname: '**'
       }
-    ],
-    domains: [
-      'picsum.photos',
-      'loremflickr.com',
-      'placehold.co',
-      'placeholder.com',
-      'dummyimage.com'
-      // Add other domains you'll use for images here
-      // For example: 'your-storage-bucket.s3.amazonaws.com',
-      // 'your-cdn.com',
-      // etc.
     ]
   },
   transpilePackages: ['geist']

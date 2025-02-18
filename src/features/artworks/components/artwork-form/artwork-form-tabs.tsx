@@ -1,9 +1,9 @@
 'use client';
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { GeneralTab } from './tabs/general-tab';
 import { UseFormReturn } from 'react-hook-form';
 import { ArtworkFormValues } from '../../schemas/artwork-schema';
+import { GeneralTab, ImagesTab } from './tabs';
 
 interface ArtworkFormTabsProps {
   form: UseFormReturn<ArtworkFormValues>;
@@ -23,15 +23,16 @@ export function ArtworkFormTabs({ form }: ArtworkFormTabsProps) {
         <GeneralTab form={form} />
       </TabsContent>
 
+      <TabsContent value='images'>
+        <ImagesTab form={form} />
+      </TabsContent>
+
       {/* We'll implement these tabs next */}
       <TabsContent value='financial'>
         {/* <FinancialTab form={form} /> */}
       </TabsContent>
       <TabsContent value='provenance'>
         {/* <ProvenanceTab form={form} /> */}
-      </TabsContent>
-      <TabsContent value='images'>
-        {/* <ImagesTab form={form} /> */}
       </TabsContent>
     </Tabs>
   );

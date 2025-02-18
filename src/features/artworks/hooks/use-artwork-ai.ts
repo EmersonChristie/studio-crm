@@ -10,8 +10,8 @@ interface UseArtworkAIProps {
   onComplete?: (content: string) => void;
 }
 
-type WritingTone = 'academic' | 'poetic' | 'conversational' | 'formal';
-type WritingLength = 'brief' | 'standard' | 'detailed';
+export type WritingTone = 'academic' | 'poetic' | 'conversational' | 'formal';
+export type WritingLength = 'brief' | 'standard' | 'detailed';
 
 interface WritingPreferences {
   tone: WritingTone;

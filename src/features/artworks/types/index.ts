@@ -11,6 +11,7 @@ export type Artwork = {
   price: number | null;
   status: ArtworkStatus;
   mainImageId: string | null;
+  description: string | null;
   artist: {
     id: string;
     name: string | null;

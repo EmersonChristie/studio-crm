@@ -1,15 +1,25 @@
-import * as z from 'zod';
-import { ArtworkStatus } from '../types';
+import { z } from 'zod';
+import { type ArtworkStatus } from '../types';
+
+// Define the image schema to match the database structure
+const imageSchema = z.object({
+  url: z.string(),
+  alt: z.string().nullable(),
+  name: z.string().optional(),
+  size: z.number().optional(),
+  type: z.string().optional()
+});
 
 export const artworkSchema = z.object({
   // General Tab
   title: z.string().min(1, 'Title is required'),
   year: z.number().nullable(),
-  medium: z.string().optional(),
-  width: z.number().optional(),
-  height: z.number().optional(),
-  depth: z.number().optional(),
-  description: z.string().optional(),
+  medium: z.string().nullable(),
+  width: z.number().nullable(),
+  height: z.number().nullable(),
+  depth: z.number().nullable(),
+  dimensions: z.string().nullable(),
+  description: z.string().nullable(),
   status: z.enum(['available', 'sold', 'reserved', 'not_for_sale'] as const),
 
   // Financial Tab
@@ -38,19 +48,11 @@ export const artworkSchema = z.object({
     .optional(),
 
   // Images Tab
-  mainImage: z
-    .object({
-      id: z.string(),
-      url: z.string(),
-      alt: z.string().optional()
-    })
-    .optional(),
+  mainImage: imageSchema.nullable(),
   secondaryImages: z
     .array(
-      z.object({
+      imageSchema.extend({
         id: z.string(),
-        url: z.string(),
-        alt: z.string().optional(),
         position: z.number()
       })
     )

@@ -20,12 +20,21 @@ interface GeneralTabProps {
 }
 
 function mapFormValuesToArtwork(values: ArtworkFormValues): Partial<Artwork> {
+  const { mainImage, ...rest } = values;
+
   return {
-    ...values,
-    mainImage: values.mainImage
+    title: rest.title,
+    year: rest.year,
+    medium: rest.medium ?? undefined,
+    width: rest.width,
+    height: rest.height,
+    depth: rest.depth,
+    description: rest.description,
+    status: rest.status,
+    mainImage: mainImage
       ? {
-          url: values.mainImage.url,
-          alt: values.mainImage.alt ?? null
+          url: mainImage.url,
+          alt: mainImage.alt
         }
       : null
   };
@@ -141,7 +150,7 @@ export function GeneralTab({ form }: GeneralTabProps) {
             <FormItem>
               <FormLabel>Medium</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} value={field.value ?? ''} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -160,7 +169,7 @@ export function GeneralTab({ form }: GeneralTabProps) {
                 />
               </div>
               <FormControl>
-                <Textarea {...field} />
+                <Textarea {...field} value={field.value ?? ''} />
               </FormControl>
               <FormMessage />
             </FormItem>

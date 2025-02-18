@@ -30,6 +30,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { WritingTone, WritingLength } from '../hooks/use-artwork-ai';
 
 interface ArtworkDescriptionAIDialogProps {
   artwork: Partial<Artwork>;
@@ -93,7 +94,7 @@ export function ArtworkDescriptionAIDialog({
           <Label>Tone</Label>
           <Select
             value={preferences.tone}
-            onValueChange={(value) =>
+            onValueChange={(value: WritingTone) =>
               setPreferences({ ...preferences, tone: value })
             }
           >
@@ -112,7 +113,7 @@ export function ArtworkDescriptionAIDialog({
           <Label>Length</Label>
           <Select
             value={preferences.length}
-            onValueChange={(value) =>
+            onValueChange={(value: WritingLength) =>
               setPreferences({ ...preferences, length: value })
             }
           >
