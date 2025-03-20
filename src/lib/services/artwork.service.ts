@@ -8,6 +8,7 @@ import { auth } from '@/lib/auth';
 import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
 import { revalidateTag } from 'next/cache';
+import { cleanupAllArtworkImages } from '@/features/artworks/utils/image-cleanup';
 
 export type CreateArtworkData = {
   title: string;
@@ -155,9 +156,9 @@ export async function createArtwork(data: CreateArtworkData) {
       year: data.year || null,
       medium: data.medium || null,
       dimensions: data.dimensions || null,
-      width: data.width || null,
-      height: data.height || null,
-      depth: data.depth || null,
+      width: data.width !== null ? data.width : null,
+      height: data.height !== null ? data.height : null,
+      depth: data.depth !== null ? data.depth : null,
       status: data.status,
       mainImageId: data.mainImageId || null,
       artistId: data.artistId
@@ -201,11 +202,35 @@ export async function deleteArtwork(id: string) {
     throw new Error('Unauthorized');
   }
 
-  await db.delete(artworks).where(eq(artworks.id, id));
+  try {
+    // First, verify the artwork exists and belongs to the current user
+    const existingArtwork = await db
+      .select({ artistId: artworks.artistId })
+      .from(artworks)
+      .where(eq(artworks.id, id))
+      .then((res) => res[0]);
 
-  // Revalidate both the specific artwork and the artworks list
-  revalidateTag('artworks');
-  revalidateTag(`artwork-${id}`);
+    if (!existingArtwork) {
+      throw new Error('Artwork not found');
+    }
 
-  return { success: true };
+    if (existingArtwork.artistId !== session.user.id) {
+      throw new Error('You do not have permission to delete this artwork');
+    }
+
+    // Use our already implemented cleanup function to handle all the image and relation cleanup
+    await cleanupAllArtworkImages(id);
+
+    // Then delete the artwork itself using SQL directly to bypass any ORM typing issues
+    await db.execute(sql`DELETE FROM artworks WHERE id = ${id}`);
+
+    // Revalidate both the specific artwork and the artworks list
+    revalidateTag('artworks');
+    revalidateTag(`artwork-${id}`);
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting artwork:', error);
+    throw error;
+  }
 }

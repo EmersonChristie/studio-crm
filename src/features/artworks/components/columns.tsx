@@ -38,7 +38,7 @@ export const columns: ColumnDef<Artwork>[] = [
       return (
         <div className='h-[100px] w-[100px] p-2'>
           <ArtworkDisplay
-            src={image?.url || ''}
+            src={image?.url || null}
             alt={image?.alt || row.getValue('title') || 'Artwork'}
           />
         </div>

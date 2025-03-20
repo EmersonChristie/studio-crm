@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import {
-  artworkSchema,
+  artworkFormSchema,
   type ArtworkFormValues
 } from '../schemas/artwork-schema';
 import { type Artwork } from '../types';
@@ -15,7 +15,7 @@ interface UseArtworkFormProps {
 
 export function useArtworkForm({ mode, defaultValues }: UseArtworkFormProps) {
   const form = useForm<ArtworkFormValues>({
-    resolver: zodResolver(artworkSchema),
+    resolver: zodResolver(artworkFormSchema),
     defaultValues: defaultValues || {
       title: '',
       year: new Date().getFullYear(),

@@ -72,8 +72,8 @@ export function DataGrid<TData>({
         // Determine the image source: either use directly if string or extract url if object
         const imageValue =
           typeof rawImageValue === 'object' && rawImageValue !== null
-            ? (rawImageValue as any)?.url || ''
-            : (rawImageValue as string) || '';
+            ? (rawImageValue as any)?.url || null
+            : (rawImageValue as string) || null;
 
         return (
           <div

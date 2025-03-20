@@ -43,6 +43,12 @@ export const navItems: NavItem[] = [
         shortcut: ['m', 'm']
       },
       {
+        title: 'Settings',
+        url: '/dashboard/settings',
+        icon: 'settings',
+        shortcut: ['s', 's']
+      },
+      {
         title: 'Login',
         shortcut: ['l', 'l'],
         url: '/',

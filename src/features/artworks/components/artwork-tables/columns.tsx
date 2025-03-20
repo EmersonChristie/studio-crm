@@ -25,7 +25,7 @@ export const columns: ColumnDef<Artwork>[] = [
             className='rounded-lg object-cover'
           /> */}
           <ArtworkDisplay
-            src={image.url}
+            src={image.url || null}
             alt={image.alt || row.original.title}
 
             // className='w-[300px]' // Optional custom size

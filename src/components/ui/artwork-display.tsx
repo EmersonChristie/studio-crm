@@ -122,7 +122,7 @@ function generateArtShadows(layers: number, shadowIntensity = 0.4) {
 }
 
 interface ArtworkDisplayProps {
-  src: string;
+  src: string | null;
   alt: string;
   className?: string;
   shadowIntensity?: number;
@@ -140,6 +140,22 @@ export function ArtworkDisplay({
   useEffect(() => {
     setShadow(generateArtShadows(4, shadowIntensity));
   }, [shadowIntensity]);
+
+  // If src is null, render a placeholder
+  if (src === null) {
+    return (
+      <div
+        className={cn(
+          'relative aspect-square w-full overflow-hidden',
+          'bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900',
+          'flex items-center justify-center',
+          className
+        )}
+      >
+        <span className='text-xs text-muted-foreground'>No image</span>
+      </div>
+    );
+  }
 
   return (
     <div
