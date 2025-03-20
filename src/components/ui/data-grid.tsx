@@ -59,7 +59,21 @@ export function DataGrid<TData>({
   return (
     <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
       {table.getRowModel().rows.map((row, index) => {
-        const imageValue = row.getValue(imageKey) as string;
+        // Get image value, which can be either a string or an object with a url property
+        const rawImageValue = row.getValue(imageKey);
+
+        // If it's null or undefined, use an empty string
+        if (rawImageValue === null || rawImageValue === undefined) {
+          console.warn(
+            `No image value found for row ${index} with key ${imageKey}`
+          );
+        }
+
+        // Determine the image source: either use directly if string or extract url if object
+        const imageValue =
+          typeof rawImageValue === 'object' && rawImageValue !== null
+            ? (rawImageValue as any)?.url || ''
+            : (rawImageValue as string) || '';
 
         return (
           <div

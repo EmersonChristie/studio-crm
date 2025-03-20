@@ -31,13 +31,16 @@ export const columns: ColumnDef<Artwork>[] = [
     enableHiding: false
   },
   {
-    accessorKey: 'image',
+    accessorKey: 'mainImage',
     header: 'Image',
     cell: ({ row }) => {
-      const image = row.getValue('image') as string;
+      const image = row.original.mainImage;
       return (
         <div className='h-[100px] w-[100px] p-2'>
-          <ArtworkDisplay src={image} alt={row.getValue('title')} />
+          <ArtworkDisplay
+            src={image?.url || ''}
+            alt={image?.alt || row.getValue('title') || 'Artwork'}
+          />
         </div>
       );
     }

@@ -132,8 +132,7 @@ export function DataTable({
           imageKey='mainImage'
           getImageProps={(artwork: Artwork) => ({
             shadowIntensity: 0.3,
-            alt: artwork.title,
-            src: artwork.mainImage?.url || ''
+            alt: artwork.title || 'Artwork'
           })}
           onSelect={onRowSelection}
         />
