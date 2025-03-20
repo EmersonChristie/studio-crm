@@ -62,10 +62,16 @@ export function useUploadFile(
     }
   }
 
+  // Function to manually reset progress indicators
+  function resetProgresses() {
+    setProgresses({});
+  }
+
   return {
     onUpload,
     uploadedFiles,
     progresses,
-    isUploading
+    isUploading,
+    resetProgresses
   };
 }

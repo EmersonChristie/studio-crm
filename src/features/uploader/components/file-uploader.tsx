@@ -22,6 +22,7 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   maxFileCount?: number;
   multiple?: boolean;
   disabled?: boolean;
+  hideFilesDisplay?: boolean;
 }
 
 export function FileUploader({
@@ -33,6 +34,7 @@ export function FileUploader({
   maxSize = uploadConfig.maxFileSize,
   accept = uploadConfig.acceptedTypes,
   disabled = false,
+  hideFilesDisplay = false,
   className,
   ...props
 }: FileUploaderProps) {
@@ -94,7 +96,7 @@ export function FileUploader({
         )}
       </Dropzone>
 
-      {files?.length > 0 && (
+      {!hideFilesDisplay && files?.length > 0 && (
         <ScrollArea className='h-fit w-full px-3'>
           <div className='flex max-h-48 flex-col gap-4'>
             {files?.map((file, index) => (
